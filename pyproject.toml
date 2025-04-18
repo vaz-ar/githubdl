@@ -1,0 +1,115 @@
+[project]
+name = "githubdl"
+version = "0.2.0"
+description = "Add your description here"
+readme = "README.md"
+
+requires-python = ">=3.10"
+
+dependencies = [
+    "docopt-ng>=0.9.0",
+    "requests>=2.32.3",
+]
+
+authors = [
+    { name = "Arnaud", email = "arnvz.dev@pm.me" },
+]
+
+[project.scripts]
+githubdl = "githubdl:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# -----------------------------------------------------------------------------
+
+[tool.ruff]
+
+# target-version = "py310"
+
+line-length = 120
+
+# Uncomment this to enable rules that are in preview
+preview = true
+output-format = "concise"
+
+
+[tool.ruff.format]
+
+quote-style = "single"
+
+[tool.ruff.lint.flake8-quotes]
+
+inline-quotes = "single"
+multiline-quotes = "single"
+
+[tool.ruff.lint]
+
+# https://docs.astral.sh/ruff/rules
+
+extend-select = [
+    # "BLE",   # flake8-blind-except (BLE)
+    # "COM",   #flake8-commas (COM)
+    # "D",     # pydocstyle (D)
+    # "EM",    # flake8-errmsg (EM)
+    # "FBT",   # flake8-boolean-trap (FBT)
+    "A",    # flake8-builtins (A)
+    "ANN",  # flake8-annotations (ANN)
+    "ARG",  # flake8-unused-arguments (ARG)
+    "B",    # flake8-bugbear (B)
+    "C4",   # flake8-comprehensions (C4)
+    "C90",  # mccabe (C90)
+    "DTZ",  # flake8-datetimez (DTZ)
+    "E",    # pycodestyle (E, W)
+    "ERA",  # eradicate (ERA)
+    "EXE",  # flake8-executable (EXE)
+    "F",    # Pyflakes (F)
+    "FA",   # flake8-future-annotations (FA)
+    "FIX",  # flake8-fixme (FIX)
+    "FLY",  # flynt (FLY)
+    "FURB", # refurb (FURB)
+    "G",    # flake8-logging-format (G)
+    "ICN",  # flake8-import-conventions (ICN)
+    "INP",  # flake8-no-pep420 (INP)
+    "INT",  # flake8-gettext (INT)
+    "ISC",  # flake8-implicit-str-concat (ISC)
+    "LOG",  # flake8-logging (LOG)
+    "N",    # pep8-naming (N)
+    "PERF", # Perflint (PERF)
+    "PGH",  # pygrep-hooks (PGH)
+    "PIE",  # flake8-pie (PIE)
+    "PL",   # Pylint (PL)
+    "PTH",  # flake8-use-pathlib (PTH)
+    "PYI",  # flake8-pyi (PYI)
+    "Q",    # flake8-quotes (Q)
+    "RET",  # flake8-return (RET)
+    "RSE",  # flake8-raise (RSE)
+    "RUF",  # Ruff-specific rules (RUF)
+    "S",    # flake8-bandit (S)
+    "SIM",  # flake8-simplify (SIM)
+    "SLF",  # flake8-self (SLF)
+    "SLOT", # flake8-slots (SLOT)
+    "T20",  # flake8-print (T20)
+    "TCH",  # flake8-type-checking (TCH)
+    "TD",   # flake8-todos (TD)
+    "TID",  # flake8-tidy-imports (TID)
+    "TRY",  # tryceratops (TRY)
+    "UP",   # pyupgrade (UP)
+    "W",    # pycodestyle (E, W)
+    "YTT",  # flake8-2020 (YTT)
+]
+
+
+# commented-out-code (ERA001)
+# line-contains-todo (FIX002)
+# magic-value-comparison (PLR2004)
+# print (T201)
+# too-many-arguments (PLR0913)
+ignore = [
+    "ERA001",
+    "FIX002",
+    "PLR0913",
+    "PLR2004",
+    "T201",
+]
