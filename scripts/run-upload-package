@@ -1,9 +1,0 @@
-#!/bin/sh
-
-cd /work
-
-echo "note to self: set password in /scripts/.pypirc before running"
-
-cp scripts/.pypirc /root
-
-twine upload dist/* --verbose
