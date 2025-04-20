@@ -1,5 +1,7 @@
 """
-api.py module - exposed methods for the githubdl library
+API module
+
+Exposed methods for the githubdl library
 """
 
 import logging
@@ -80,17 +82,19 @@ def dl_dir(
             save_file_to_path(repo_url, download_filename, target_path, github_token, reference)
             if file_item.lower().endswith('.gitmodules') and submodules:
                 full_filename = fp.get_target_full_filename(download_filename, target_path)
-                process_gitmodule(github_token, base_path, file_item, target_path, full_filename)
+                process_gitmodule(github_token, target_path, full_filename)
 
 
-def process_gitmodule(github_token: str, base_path: str, file_item: str, target_path: str, full_filename: str) -> None:
+def process_gitmodule(github_token: str, target_path: str, full_filename: str) -> None:
     with open(full_filename, encoding='utf-8') as f:
         content = f.readlines()
+
     content = [x.strip() for x in content]
     path = None
     url = None
     path_pred = re.compile(r'^\s*path\s*=\s*(.*)$')
     url_pred = re.compile(r'^\s*url\s*=\s*(.*)$')
+
     for line in content:
         if not path:
             path = path_pred.search(line)

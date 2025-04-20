@@ -51,7 +51,7 @@ multiline-quotes = "single"
 extend-select = [
     # "BLE",   # flake8-blind-except (BLE)
     # "COM",   #flake8-commas (COM)
-    # "D",     # pydocstyle (D)
+    "D", # pydocstyle (D)
     # "EM",    # flake8-errmsg (EM)
     # "FBT",   # flake8-boolean-trap (FBT)
     "A",    # flake8-builtins (A)
@@ -107,6 +107,10 @@ extend-select = [
 # print (T201)
 # too-many-arguments (PLR0913)
 ignore = [
+    "D200",
+    "D212",
+    "D400",
+    "D415",
     "ERA001",
     "FIX002",
     "PLR0913",

@@ -1,3 +1,7 @@
+"""
+Files processing module
+"""
+
 import logging
 import os
 import pathlib
@@ -17,13 +21,13 @@ def get_filename_without_first_directory(file_name: str) -> str:
 
 
 def write_file(file_name: str, file_data: bytes) -> None:
-    logging.info('Writing to file: ' + file_name)
+    logging.info('Writing to file: %s', file_name)
     with open(file_name, 'wb') as write_file:
         write_file.write(file_data)
 
 
 def create_directory(dir_name: str) -> None:
-    logging.info('Checking for directory: ' + dir_name)
+    logging.info('Checking for directory: %s', dir_name)
     if not os.path.exists(dir_name):
-        logging.info('Creating directory: ' + dir_name)
+        logging.info('Creating directory: %s', dir_name)
         os.makedirs(dir_name)

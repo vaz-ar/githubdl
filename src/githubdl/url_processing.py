@@ -1,3 +1,7 @@
+"""
+URLs processing module
+"""
+
 import logging
 
 from . import url_helpers as uh
@@ -32,14 +36,16 @@ def generate_ref_string(reference: str) -> str:
 
 def generate_request_string(file_name: str, reference: str) -> str:
     reference = generate_ref_string(reference)
-    if file_name != '' or reference != '':
-        return '/' + file_name + reference
+
+    if file_name or reference:
+        return f'/{file_name}{reference}'
+
     return ''
 
 
 def generate_github_api_url(repo_name: str, file_name: str, reference: str, api_path: str = 'contents') -> str:
     request_string = generate_request_string(file_name, reference)
-    logging.info('repo_name: ' + repo_name + ' api_path: ' + api_path + ' request_string: ' + request_string)
+    logging.info('repo_name: %s api_path: %s request_string: %s', repo_name, api_path, request_string)
     return 'https://api.github.com/repos/' + repo_name + '/' + api_path + request_string
 
 

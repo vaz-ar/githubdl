@@ -1,5 +1,5 @@
 """
-__init__.py
+Githubdl main module
 """
 
 import argparse
@@ -11,7 +11,7 @@ from .api import dl_branches, dl_dir, dl_file, dl_tags
 
 def get_default_log_level(log_level: str) -> int:
     """
-    Defines the default log levels.
+    Define the default log levels
     """
     if log_level == 'DEBUG':
         return logging.DEBUG
@@ -29,7 +29,7 @@ def get_default_log_level(log_level: str) -> int:
 
 def set_log_level(args: dict[str, str]) -> int:
     """
-    Sets the log level based on the log_level arg
+    Set the log level based on the log_level arg
     """
     if args['log_level'] is not None:
         return get_default_log_level(args['log_level'])
@@ -86,7 +86,7 @@ def main() -> None:
     parser.add_argument(
         '-r',
         '--reference',
-        help='The name of the commit/branch/tag. Default: the repository’s default branch.',
+        help="The name of the commit/branch/tag. Default: the repository's default branch.",
         required=False,
     )
     parser.add_argument(

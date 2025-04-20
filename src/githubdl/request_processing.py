@@ -1,3 +1,7 @@
+"""
+Requests processing module
+"""
+
 import json
 import logging
 import os
@@ -10,13 +14,14 @@ from . import url_processing as up
 
 def get_github_token(github_token: str) -> str:
     try:
-        if github_token == '':
+        if not github_token:
             return os.environ['GITHUB_TOKEN']
-        return github_token
-    except KeyError:
+    except KeyError as ex:
         err_message = "Unable to find Github token either as a parameter or the in environment variable 'GITHUB_TOKEN'"
         logging.critical(err_message)
-        raise RuntimeError(err_message)
+        raise RuntimeError(err_message) from ex
+    else:
+        return github_token
 
 
 def get_files_from_json(response_object: dict[Any, Any]) -> dict[str, str]:
@@ -24,7 +29,6 @@ def get_files_from_json(response_object: dict[Any, Any]) -> dict[str, str]:
     try:
         for item in response_object:
             files.update({item.get('name'): item.get('type')})
-        return files
     except AttributeError as ex:
         err_message = (
             'Unable to retrieve list of files from response.\n Exception: '
@@ -33,12 +37,14 @@ def get_files_from_json(response_object: dict[Any, Any]) -> dict[str, str]:
             + str(response_object)
         )
         logging.critical(err_message)
-        raise RuntimeError(err_message)
+        raise RuntimeError(err_message) from ex
+    else:
+        return files
 
 
 def get_list_of_files_in_path(repo_url: str, base_path: str, github_token: str, reference: str) -> dict[str, str]:
     github_token = get_github_token(github_token)
-    logging.info('Retrieving a list of files for directory: ' + base_path)
+    logging.info('Retrieving a list of files for directory: %s', base_path)
     response = download_git_file_content(repo_url, base_path, github_token, reference)
     response_object = json.loads(response.decode('utf-8'))
     return get_files_from_json(response_object)
@@ -52,9 +58,10 @@ def process_request(http_url: str, github_token: str) -> bytes:
             headers={'Authorization': 'token ' + github_token, 'Accept': 'application/vnd.github.v3.raw'},
             timeout=30,
         )
+    except requests.exceptions.RequestException:
+        logging.exception('Error requesting file')
+    else:
         return request.content
-    except requests.exceptions.RequestException as ex:
-        logging.exception('Error requesting file. RequestException: ' + str(ex))
 
 
 def fix_url_path_on_windows(http_url: str) -> str:
@@ -67,7 +74,7 @@ def download_git_file_content(repo_url: str, file_name: str, github_token: str, 
     github_token = get_github_token(github_token)
     (domain_name, repo_name) = up.get_url_components(repo_url)
     http_url = up.generate_repo_api_url(domain_name, repo_name, file_name, reference, 'contents')
-    logging.info('Requesting file: ' + file_name + ' at url: ' + http_url)
+    logging.info('Requesting file: %s at url: %s', file_name, http_url)
     return process_request(http_url, github_token)
 
 
@@ -75,5 +82,5 @@ def download_git_repo_info(repo_url: str, github_token: str, info_type: str) -> 
     github_token = get_github_token(github_token)
     (domain_name, repo_name) = up.get_url_components(repo_url)
     http_url = up.generate_repo_api_url(domain_name, repo_name, '', '', info_type)
-    logging.info('Requesting repository ' + info_type + ' at url: ' + http_url)
+    logging.info('Requesting repository %s  at url: %s', info_type, http_url)
     return process_request(http_url, github_token)
