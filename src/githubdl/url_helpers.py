@@ -2,21 +2,22 @@
 URLs helpers module
 """
 
-import logging
 import re
+from logging import getLogger
 from urllib.parse import urlparse
+
+
+_logger = getLogger('githubdl')
 
 
 def check_url_is_http(repo_url: str) -> bool:
     predicate = re.compile(r'^https?://.*$')
-    match = predicate.search(repo_url)
-    return match is not None
+    return predicate.search(repo_url) is not None
 
 
 def check_url_is_ssh(repo_url: str) -> bool:
     predicate = re.compile(r'^git\@.*\.git$')
-    match = predicate.search(repo_url)
-    return match is not None
+    return predicate.search(repo_url) is not None
 
 
 def get_domain_name_from_http_url(repo_url: str) -> str:
@@ -47,7 +48,7 @@ def get_domain_name_from_ssh_url(repo_url: str) -> str:
 def validate_protocol_exists(is_ssh: bool, is_http: bool) -> None:
     if not is_ssh and not is_http:
         err_message = 'Error: repository url provided is not http(s) or ssh'
-        logging.critical(err_message)
+        _logger.critical(err_message)
         raise RuntimeError(err_message)
 
 
