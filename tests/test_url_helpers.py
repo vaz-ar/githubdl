@@ -1,10 +1,14 @@
-#!/usr/local/bin/python
+"""
+URLs helpers tests
+"""
+
+# ruff: noqa: S101
 
 import inspect
 import os
 import sys
 
-import url_helpers as uh
+from githubdl import url_helpers as uh
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -14,36 +18,28 @@ sys.path.insert(0, includedir)
 
 class TestUrlHelpers:
     def test_check_url_is_http_http(self) -> None:
-        result = uh.check_url_is_http('http://test.com')
-        assert result
+        assert uh.check_url_is_http('http://test.com')
 
     def test_check_url_is_http_https(self) -> None:
-        result = uh.check_url_is_http('https://test.com')
-        assert result
+        assert uh.check_url_is_http('https://test.com')
 
     def test_check_url_is_not_http_1(self) -> None:
-        result = uh.check_url_is_http('httpxx://test.com')
-        assert not result
+        assert not uh.check_url_is_http('httpxx://test.com')
 
     def test_check_url_is_not_http_2(self) -> None:
-        result = uh.check_url_is_http('htp://test.com')
-        assert not result
+        assert not uh.check_url_is_http('htp://test.com')
 
     def test_check_url_is_ssh(self) -> None:
-        result = uh.check_url_is_ssh('git@github.com:pypa/sampleproject.git')
-        assert result
+        assert uh.check_url_is_ssh('git@github.com:pypa/sampleproject.git')
 
     def test_check_url_is_not_ssh_invalid_user(self) -> None:
-        result = uh.check_url_is_ssh('giti_@github.com:pypa/sampleproject.git')
-        assert not result
+        assert not uh.check_url_is_ssh('giti_@github.com:pypa/sampleproject.git')
 
     def test_check_url_is_not_ssh_slash(self) -> None:
-        result = uh.check_url_is_ssh('git@test.com/test.git')
-        assert result
+        assert uh.check_url_is_ssh('git@test.com/test.git')
 
     def test_check_url_is_not_ssh_http(self) -> None:
-        result = uh.check_url_is_ssh('htp://test.com')
-        assert not result
+        assert not uh.check_url_is_ssh('htp://test.com')
 
     def test_get_domain_name_from_http(self) -> None:
         result = uh.get_domain_name_from_http_url('https://github.com/pypa/sampleproject.git')

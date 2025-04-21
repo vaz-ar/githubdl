@@ -122,9 +122,9 @@ def main() -> None:
     args = vars(parser.parse_args())
 
     logging.basicConfig(
-        stream=stdout,
         level=set_log_level(args),
-        format='%(asctime)s - %(levelname)-8s - %(message)s',
+        format='%(asctime)s  %(levelname)-8s %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
     )
 
     set_github_token(args.get('github_token'))

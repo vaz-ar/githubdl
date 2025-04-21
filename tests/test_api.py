@@ -1,20 +1,33 @@
-#!/usr/local/bin/python
+"""
+API tests
+"""
+
+# ruff: noqa: S101
 
 import os
 import shutil
 from pathlib import Path
 
-
 import githubdl
 
 
-class TestGithubPathDl:
+class TestApi:
+    """
+    API tests class
+    """
+
     @classmethod
     def setup_class(cls) -> None:
         cls.single_file_name = 'README.md'
         cls.single_dir_name = 'support'
         cls.test_repo_url_http = 'https://github.com/wilvk/pbec'
         cls.test_repo_url_ssh = 'git@github.com:wilvk/pbec.git'
+
+    def teardown(self) -> None:
+        self.cleanup()
+
+    def setup(self) -> None:
+        self.cleanup()
 
     def is_single_file_present(self):
         single_file = Path(self.single_file_name)
@@ -33,12 +46,6 @@ class TestGithubPathDl:
             os.remove(self.single_file_name)
         if self.is_single_dir_present():
             shutil.rmtree(self.single_dir_name)
-
-    def teardown(self) -> None:
-        self.cleanup()
-
-    def setup(self) -> None:
-        self.cleanup()
 
     def test_can_download_file_http_fille_present(self) -> None:
         githubdl.dl_file(self.test_repo_url_http, self.single_file_name)
