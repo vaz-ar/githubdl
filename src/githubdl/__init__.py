@@ -4,9 +4,10 @@ Githubdl main module
 
 import argparse
 import logging
-import sys
+from json import dump as json_dump
+from json import loads as json_loads
 from os import environ
-from sys import stdout
+from pathlib import Path
 
 from .api import dl_branches, dl_dir, dl_file, dl_tags
 
@@ -69,8 +70,18 @@ def main() -> None:
     )
     group = parser.add_mutually_exclusive_group(required=True)
 
-    group.add_argument('-f', '--file', help='The name of the file to download.', required=False)
-    group.add_argument('-d', '--dir', help='The name of the directory to download.', required=False)
+    group.add_argument(
+        '-f',
+        '--file',
+        help='The name of the file to download.',
+        required=False,
+    )
+    group.add_argument(
+        '-d',
+        '--dir',
+        help='The name of the directory to download.',
+        required=False,
+    )
     group.add_argument(
         '-a',
         '--tags',
@@ -116,6 +127,7 @@ def main() -> None:
         '--submodules',
         help='A switch specifying that all submodules are to be downloaded.',
         required=False,
+        # store_true automatically sets the default value to False
         action='store_true',
     )
 
@@ -138,20 +150,26 @@ def main() -> None:
     if args['reference'] is not None:
         reference = args['reference']
 
-    if args['tags']:
-        tags_json = dl_tags(repo_url=args['url'])
-        sys.stdout.write(tags_json)
-    elif args['branches']:
-        branches_json = dl_branches(repo_url=args['url'])
-        sys.stdout.write(branches_json)
+    # --------------------------------------------------------------------------
 
-    if args['file'] is not None:
+    if args['tags']:
+        with Path('tags.json').open(mode='w', encoding='utf-8') as f:
+            _logger.info('Writing tags list as branches.json')
+            json_dump(json_loads(dl_tags(args['url'])), f, indent=2)
+
+    elif args['branches']:
+        with Path('branches.json').open(mode='w', encoding='utf-8') as f:
+            _logger.info('Writing branches list as branches.json')
+            json_dump(json_loads(dl_branches(args['url'])), f, indent=2)
+
+    elif args['file'] is not None:
         dl_file(
             repo_url=args['url'],
             file_name=args['file'],
             target_filename=target,
             reference=reference,
         )
+
     elif args['dir'] is not None:
         dl_dir(
             repo_url=args['url'],
