@@ -1,4 +1,5 @@
 [project]
+
 name = "githubdl"
 version = "0.2.0"
 description = "Add your description here"
@@ -8,12 +9,12 @@ requires-python = ">=3.10"
 
 dependencies = [
     "docopt-ng>=0.9.0",
-    "pytest>=8.3.5",
     "requests>=2.32.3",
 ]
 
 authors = [
     { name = "Arnaud", email = "arnvz.dev@pm.me" },
+    # { name = "Willem van Ketwich", email = "willvk@gmail.com" },
 ]
 
 [project.scripts]
@@ -23,7 +24,32 @@ githubdl = "githubdl:main"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "tox-uv>=1.25.0",
+]
+
 # -----------------------------------------------------------------------------
+# Use tox to run tests on multiple python versions at once
+
+[tool.tox]
+env_list = [
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13",
+]
+
+[tool.tox.env_run_base]
+description = "Run pytest on {base_python} python version"
+runner = "uv-venv-lock-runner"
+pass_env = ["GITHUB_TOKEN"]
+commands = [["pytest"]]
+
+# -----------------------------------------------------------------------------
+# Ruff linter/formatter config
 
 [tool.ruff]
 
