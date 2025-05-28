@@ -5,31 +5,37 @@ A tool for downloading individual files/directories from Github or Github Enterp
 
 This circumvents the requirement to clone a complete repository.
 
-# Requirements:
+## Requirements
 
 - Python 3.10+
 - A Github or Github Enterprise Account
 
+## Install
 
-# Usage:
+~~~bash
+uv tool install --from=https://github.com/vaz-ar/githubdl.git githubdl
+~~~
 
-## Obtaining a Github token:
+## Usage
+
+### Obtaining a Github token
 
 You will need a token from either Github Enterprise or Github as this package works with the Github v3 API.
 
 There are instructions on how to do this [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
 
-# Usage (from the commandline):
+
+## Command line usage
 
 With your Github token, export it as the environment variable `GITHUB_TOKEN`.
 
-## On Unix/Linux:
+### On Unix/Linux
 
 ~~~bash
 $ export GITHUB_TOKEN=1234567890123456789012345678901234567890123
 ~~~
 
-## Single file:
+### Single file
 
 Then, for example, to download a file called `README.md` from the repository `http://github.com/wilvk/pbec`:
 
@@ -39,7 +45,7 @@ $ githubdl -u "http://github.com/wilvk/pbec" -f "README.md"
 2018-05-12 07:19:18,165 - root         - INFO     - Writing to file: README.md
 ~~~
 
-## Entire directory:
+### Entire directory
 
 ~~~bash
 $ githubdl -u "http://github.com/wilvk/pbec" -d "support"
@@ -50,7 +56,7 @@ $ githubdl -u "http://github.com/wilvk/pbec" -d "support"
 2018-05-12 07:19:46,286 - root         - INFO     - Retrieving a list of files for directory: support/docker
 ~~~
 
-## Entire repository:
+### Entire repository
 
 ~~~bash
 $ githubdl -u "http://github.com/wilvk/pbec" -d "/" -t "."
@@ -58,21 +64,21 @@ $ githubdl -u "http://github.com/wilvk/pbec" -d "/" -t "."
 
 Note: if `-t` is not set, output will go to your `/` directory.
 
-## By commit hash:
+### By commit hash
 
-## Single file from a specific commit:
+### Single file from a specific commit
 
 ~~~bash
 $ githubdl -u "http://github.com/wilvk/pbec" -f "README.md" -r "c29eb5a5d364870a55c0c22f203f8c4e2ce1c638"
 ~~~
 
-## Entire directory from a specific commit:
+### Entire directory from a specific commit
 
 ~~~bash
 $ githubdl -u "http://github.com/wilvk/pbec" -d "support" -r "c29eb5a5d364870a55c0c22f203f8c4e2ce1c638"
 ~~~
 
-## Entire repository from a specific commit:
+### Entire repository from a specific commit
 
 ~~~bash
 $ githubdl -u "http://github.com/wilvk/pbec" -d "/" -r "c29eb5a5d364870a55c0c22f203f8c4e2ce1c638" -t "."
@@ -80,30 +86,30 @@ $ githubdl -u "http://github.com/wilvk/pbec" -d "/" -r "c29eb5a5d364870a55c0c22f
 
 Note: if `-t` is not set, output will go to your `/` directory.
 
-## Entire repository from a specific commit, with submodules (as specified in .gitmodules):
+### Entire repository from a specific commit, with submodules (as specified in .gitmodules)
 
 ~~~bash
 $ githubdl -u "http://github.com/wilvk/pbec" -d "/" -r "c29eb5a5d364870a55c0c22f203f8c4e2ce1c638" -t "." -s
 ~~~
 
-# List all tags for a repository in JSON:
+### List all tags for a repository in JSON
 
 ~~~bash
 $ githubdl -u "http://github.com/wilvk/pbec" -a
 ~~~
 
-# List all branches for a repository in JSON:
+### List all branches for a repository in JSON
 
 ~~~bash
 $ githubdl -u "http://github.com/wilvk/pbec" -b
 ~~~
 
 
-## Logging:
+## Logging
 
 Valid log levels are: `DEBUG`, `INFO`, `WARN`, `ERROR`, `CRITICAL`
 
-## References:
+## References
 
 References can be applied to file and directory download only and consist of valid:
 
