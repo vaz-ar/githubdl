@@ -8,13 +8,14 @@ readme = "README.md"
 requires-python = ">=3.10"
 
 dependencies = [
-    "docopt-ng>=0.9.0",
+    "colorlog>=6.9.0",
+    "python-dotenv>=1.1.0",
     "requests>=2.32.3",
 ]
 
 authors = [
     { name = "Arnaud", email = "arnvz.dev@pm.me" },
-    # { name = "Willem van Ketwich", email = "willvk@gmail.com" },
+    { name = "Willem van Ketwich", email = "willvk@gmail.com" },
 ]
 
 [project.scripts]

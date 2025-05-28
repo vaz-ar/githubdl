@@ -5,62 +5,68 @@ Githubdl main module
 import argparse
 import logging
 from json import dump as json_dump
-from json import loads as json_loads
 from os import environ
 from pathlib import Path
+from sys import exit as sys_exit
+
+from colorlog import ColoredFormatter, StreamHandler, getLogger
+from dotenv import load_dotenv
 
 from .api import dl_branches, dl_dir, dl_file, dl_tags
 
-_logger = logging.getLogger('githubdl')
+_logger = getLogger('githubdl')
 
 
-def set_github_token(github_token: str) -> None:
+def set_github_token(github_token: str) -> bool:
     """
     Set the github token at env level
 
     If not github token was passed as parameter and
     GITHUB_TOKEN is not set in the environment an exception will be raised
     """
-    if not environ.get('GITHUB_TOKEN'):
+    if not environ.get('GITHUB_TOKEN', ''):
         if not github_token:
-            err_message = (
-                "Unable to find Github token either as a parameter or the in environment variable 'GITHUB_TOKEN'"
+            _logger.critical(
+                "No Github token found, either as a parameter or in the environment variable 'GITHUB_TOKEN'"
             )
-            _logger.critical(err_message)
-            raise RuntimeError(err_message)
+            return False
 
         environ['GITHUB_TOKEN'] = github_token
+
+    return True
 
 
 def set_log_level(args: dict[str, str]) -> int:
     """
     Set the log level based on the log_level arg
     """
+    log_level = logging.INFO
+
     if (level := args.get('log_level')) is not None:
         match level:
             case 'DEBUG':
-                return logging.DEBUG
+                log_level = logging.DEBUG
             case 'INFO':
-                return logging.INFO
+                log_level = logging.INFO
             case 'WARN':
-                return logging.WARNING
+                log_level = logging.WARNING
             case 'ERROR':
-                return logging.ERROR
+                log_level = logging.ERROR
             case 'CRITICAL':
-                return logging.CRITICAL
-            case _:
-                return logging.INFO
+                log_level = logging.CRITICAL
 
     if args['tags'] or args['branches']:
-        return logging.WARNING
+        log_level = logging.WARNING
 
-    return logging.INFO
+    return log_level
 
 
 def main() -> None:
     """
     Main entrypoint for the cli application
     """
+    load_dotenv(encoding='utf-8')
+
     parser = argparse.ArgumentParser(
         description=(
             'Github Path Downloader. '
@@ -87,6 +93,7 @@ def main() -> None:
         '--tags',
         help='A switch specifying that a list of tags is to be downloaded.',
         required=False,
+        # store_true automatically sets the default value to False
         action='store_true',
     )
     group.add_argument(
@@ -94,10 +101,16 @@ def main() -> None:
         '--branches',
         help='A switch specifying that a list of branches is to be downloaded.',
         required=False,
+        # store_true automatically sets the default value to False
         action='store_true',
     )
 
-    parser.add_argument('-u', '--url', help='The url of the repository to download.', required=True)
+    parser.add_argument(
+        '-u',
+        '--url',
+        help='The url of the repository to download.',
+        required=True,
+    )
     parser.add_argument(
         '-t',
         '--target',
@@ -107,13 +120,15 @@ def main() -> None:
     parser.add_argument(
         '-g',
         '--git_token',
-        help='The value of the Github/Github Enterprise Token. Can also be specified in the environment variable GITHUB_TOKEN.',
+        help='The value of the Github/Github Enterprise Token.'
+        'Can also be specified in the environment variable GITHUB_TOKEN.',
         required=False,
     )
     parser.add_argument(
         '-l',
         '--log_level',
-        help='The level of logging to use for output. Valid options are: DEBUG, INFO, WARN, ERROR, CRITICAL. Defaults to INFO.',
+        help='The level of logging to use for output. Valid options are: DEBUG, INFO, WARN, ERROR, CRITICAL. '
+        'Defaults to INFO.',
         required=False,
     )
     parser.add_argument(
@@ -133,53 +148,49 @@ def main() -> None:
 
     args = vars(parser.parse_args())
 
-    logging.basicConfig(
-        level=set_log_level(args),
-        format='%(asctime)s  %(levelname)-8s %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
+    # --- logging
+    handler = StreamHandler()
+    handler.setFormatter(
+        ColoredFormatter(
+            fmt='%(log_color)s%(asctime)s  %(levelname)-8s %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S',
+        )
     )
+    _logger.addHandler(handler)
+    _logger.setLevel(set_log_level(args))
+    #  ---
 
-    set_github_token(args.get('github_token'))
-
-    target = ''
-    reference = ''
-
-    if args['target'] is not None:
-        target = args['target']
-
-    if args['reference'] is not None:
-        reference = args['reference']
-
-    # --------------------------------------------------------------------------
+    if not set_github_token(str(args.get('github_token'))):
+        sys_exit(1)
 
     if args['tags']:
         with Path('tags.json').open(mode='w', encoding='utf-8') as f:
             _logger.info('Writing tags list as branches.json')
-            json_dump(json_loads(dl_tags(args['url'])), f, indent=2)
+            json_dump(dl_tags(args['url']), f, indent=2)
 
     elif args['branches']:
         with Path('branches.json').open(mode='w', encoding='utf-8') as f:
             _logger.info('Writing branches list as branches.json')
-            json_dump(json_loads(dl_branches(args['url'])), f, indent=2)
+            json_dump(dl_branches(args['url']), f, indent=2)
 
     elif args['file'] is not None:
         dl_file(
             repo_url=args['url'],
             file_name=args['file'],
-            target_filename=target,
-            reference=reference,
+            target_filename=args['target'],
+            reference=args['reference'],
         )
 
     elif args['dir'] is not None:
         dl_dir(
             repo_url=args['url'],
             base_path=args['dir'],
-            target_path=target,
-            reference=reference,
+            target_path=args['target'],
+            reference=args['reference'],
             submodules=args['submodules'],
         )
 
 
 if __name__ == '__main__':
-    # Execute when the module is not initialized from an import statement.
+    # Execute when the module is not initialised from an import statement.
     main()
